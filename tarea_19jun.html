@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html;
+charset=utf-8">
+<meta name="viewport" id="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+<script type="text/javascript" charset="utf-8" src="../../../Desktop/Documents/GitHub/hola_mundo/phonegap.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../../Desktop/phonegap-1.0.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../../Desktop/json2.js"></script>
+     <script type="text/javascript" charset="utf-8" src="../../../../ISMAEL/Documents/GitHub/practica19junio/phonegap-1.0.0.js"></script>
+   
+    <script type="text/javascript" charset="utf-8">
+
+
+function onBodyLoad() {
+document.addEventListener("deviceready",onDeviceReady,
+false);
+}
+function onDeviceReady() {
+navigator.notification.alert("PhoneGap is ready!");
+}
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../../../Desktop/Documents/GitHub/hola_mundo/phonegap.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+//espera que phonegap este listo
+document.addEventListener("deviceready", onDeviceReady, false);
+
+// PhoneGap esta listo y cuando ocurre el evento se ejecuta
+    function onDeviceReady() {
+        var element = document.getElementById('deviceProperties');
+
+        element.innerHTML = 'Nombre del dispositivo:' + device.name + '<br />' + 
+                            'Versión Phonegap: ' + device.phonegap + '<br />' + 
+                            'Plataforma: '  + device.platform + '<br />' + 
+                            'UUID: ' + device.uuid     + '<br />' + 
+                            'Versión:' + device.version  + '<br />';
+    }
+	// -----------------inicia camara---------------
+	
+	// Función 'callback' satisfactoria
+    //
+    function captureSuccess(mediaFiles) {
+        var i, len;
+        for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+            uploadFile(mediaFiles[i]);
+        }       
+    }
+
+    // Llamada si algún error ocurre.
+    // 
+    function captureError(error) {
+        var msg = 'Ocurrió un error mientras se capturaba: ' + error.code;
+        navigator.notification.alert(msg, null, 'Uh oh!');
+    }
+
+    // Un botón llamara esta función
+    //
+    function captureImage() {
+        // Lanza la aplicación de cámara, 
+        // y permite capturar hasta 2 imágenes
+        navigator.device.capture.captureImage(captureSuccess, captureError, {limit: 2});
+    }
+
+    // Sube los ficheros al servidor
+    function uploadFile(mediaFile) {
+        var ft = new FileTransfer(),
+            path = mediaFile.fullPath,
+            name = mediaFile.name;
+
+        ft.upload(path,
+            "http://my.domain.com/upload.php",
+            function(result) {
+                console.log('Subida correcta: ' + result.responseCode);
+                console.log(result.bytesSent + ' bytes enviados');
+            },
+            function(error) {
+                console.log('Error en la subida del fichero ' + path + ': ' + error.code);
+            },
+            { fileName: name });   
+    }
+	
+	
+	
+</script>
+
+
+<!-------------Gravar audio---------->
+
+<script type="text/javascript" charset="utf-8">
+
+    // Espere a que PhoneGap se inicie
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // Graba audio
+    // 
+    function recordAudio() {
+        var src = "myrecording.mp3";
+        var mediaRec = new Media(src, onSuccess, onError);
+
+        // Graba audio
+        mediaRec.startRecord();
+
+        // Parar de grabar tras 10 segundos
+        var recTime = 0;
+        var recInterval = setInterval(function() {
+            recTime = recTime + 1;
+            setAudioPosition(recTime + " seg");
+            if (recTime >= 10) {
+                clearInterval(recInterval);
+                mediaRec.stopRecord();
+            }
+        }, 1000);
+    }
+
+    // PhoneGap esta listo
+    //
+    function onDeviceReady() {
+        recordAudio();
+    }
+
+    // Función 'callback' onSuccess
+    //
+    function onSuccess() {
+        console.log("recordAudio():Audio correcto");
+    }
+
+    // Función 'callback' onError
+    //
+    function onError(error) {
+        alert('código: '  + error.code    + '\n' + 
+              'mensaje: ' + error.message + '\n');
+    }
+
+    // Muestra la posición
+    // 
+    function setAudioPosition(position) {
+        document.getElementById('audio_position').innerHTML = position;
+    }
+
+    </script>
+
+
+
+</head>
+<body onLoad="onBodyLoad()">
+<h1>hola mundo phonegap</h1>
+
+
+<br/>
+
+<p id="deviceProperties">Cargando...</p>
+<br>
+<button onClick="captureImage();">Capturar imagen</button> <br>
+<br>
+<p id="media">Grabando audio...</p>
+    <p id="audio_position"></p>
+</body>
+</html>
